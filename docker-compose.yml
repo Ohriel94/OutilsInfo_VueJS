@@ -1,42 +1,60 @@
 services:
-  app:
-    container_name: oivjs-app
-    build: .
-    ports:
-      - '8000:80'
-    depends_on:
-      - db
-    networks:
-      - frontend
-      - backend
-  db:
-    container_name: oivjs-db
-    image: postgres
-    restart: always
-    volumes:
-      - data:/var/lib/postgresql/data
-      - ./scripts/db:/docker-entrypoint-initdb.d/
-    networks:
-      - backend
-    environment:
-      - POSTGRES_DB=oivjs_db
-      - POSTGRES_USER=oivjs_user
-      - POSTGRES_PASSWORD=oivjs_pass123!
-      - PGDATA=/var/lib/postgresql/data/pgdata
-    healthcheck:
-      test: pg_isready -U $$POSTGRES_USER
-      interval: 1s
-      timeout: 5s
-      retries: 10
-    ports:
-      - '8001:5432'
+   db:
+      container_name: database
+      image: postgres
+      environment:
+         POSTGRES_USER: oivjs-user
+         POSTGRES_PASSWORD: oivjs-pass123!
+         POSTGRES_DB: oivjs-db
+         PGDATA: /var/lib/postgresql/data
+      healthcheck:
+         test: pg_isready -U $POSTGRES_USER
+         interval: 1s
+         timeout: 5s
+         retries: 10
+      volumes:
+         - db-data:/var/lib/postgresql/data
+         - ./scripts:/docker-entrypoint-initdb.d
+      ports:
+         - '5432:5432'
+      networks:
+         - backend
+
+   backend:
+      container_name: backend
+      build:
+         context: ./backend
+      ports:
+         - '9091:3001'
+      # depends_on:
+      #    - db
+      environment:
+         DATABASE_URL: postgres://oivjs-user:oivjs-pass123!@db:5432/oivjs-db
+         NODE_ENV: production
+      networks:
+         - backend
+         - default
+
+   frontend:
+      container_name: frontend
+      build:
+         context: ./frontend
+      ports:
+         - '9090:80'
+      # depends_on:
+      #    - backend
+      environment:
+         - NGINX_HOST=localhost
+         - NGINX_PORT=3000
+      networks:
+         - default
 
 volumes:
-  data:
-    name: oivjs_data
+   db-data:
+      name: oivjs-data
 
 networks:
-  frontend:
-    name: oivjs_fe
-  backend:
-    name: oivjs_be
+   backend:
+      name: oivjs-bck-net
+   default:
+      name: oivjs-frt-net

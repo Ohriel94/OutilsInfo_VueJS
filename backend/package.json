@@ -1,0 +1,33 @@
+{
+	"name": "outilsinfo_bck",
+	"version": "0.1.0",
+	"private": true,
+	"description": "A NodeJS backend with express for outilsinfo_vuejs app",
+	"main": "server.js",
+	"type": "module",
+	"scripts": {
+		"test": "jest",
+		"watch": "jest --watchAll",
+		"cover": "npx jest --coverage",
+		"start": "nodemon server.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Ohriel94/OutilsInfo_VueJS.git"
+	},
+	"author": "Ohriel94",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Ohriel94/OutilsInfo_VueJS/issues"
+	},
+	"homepage": "https://github.com/Ohriel94/OutilsInfo_VueJS#readme",
+	"dependencies": {
+		"express": "^4.21.2",
+		"postgres": "^3.4.5"
+	},
+	"devDependencies": {
+		"babel": "^6.23.0",
+		"jest": "^29.7.0",
+		"nodemon": "^3.1.9"
+	}
+}

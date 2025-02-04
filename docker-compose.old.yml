@@ -1,0 +1,42 @@
+services:
+   db:
+      container_name: oivjs-db
+      image: postgres
+      restart: always
+      volumes:
+         - data:/var/lib/postgresql/data
+         - ./scripts/:/docker-entrypoint-initdb.d/
+      networks:
+         - backend
+      environment:
+         - POSTGRES_DB=oivjs_db
+         - POSTGRES_USER=oivjs_user
+         - POSTGRES_PASSWORD=oivjs_pass123!
+         - PGDATA=/var/lib/postgresql/data/pgdata
+      healthcheck:
+         test: pg_isready -U $$POSTGRES_USER
+         interval: 1s
+         timeout: 5s
+         retries: 10
+      ports:
+         - '8001:5432'
+   app:
+      container_name: oivjs-app
+      build: .
+      ports:
+         - '8000:80'
+      depends_on:
+         - db
+      networks:
+         - frontend
+         - backend
+
+volumes:
+   data:
+      name: oivjs_data
+
+networks:
+   frontend:
+      name: oivjs_fe
+   backend:
+      name: oivjs_be

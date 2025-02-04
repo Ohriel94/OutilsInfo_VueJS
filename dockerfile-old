@@ -1,0 +1,30 @@
+
+# BUILD STAGE
+FROM node:22 as backend-build
+WORKDIR /
+COPY backend backend
+WORKDIR /backend
+RUN npm install
+# RUN npm run build
+CMD [ "/backend/scripts/init-user-db.sh", oivjs_user, oivjs_db ]
+
+# PRODUCTION STAGE
+FROM node:22 as frontend-build
+WORKDIR /
+COPY frontend frontend
+WORKDIR /frontend
+RUN npm i pnpm && pnpm i 
+# RUN pnpm buil
+
+
+# final stage:
+FROM scratch
+COPY --from=backend-build \
+    /backend backend
+COPY --from=frontend-build \
+    /frontend frontend
+
+EXPOSE 3001
+EXPOSE 8000
+
+CMD ["/backend/server.js"]
