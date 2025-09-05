@@ -7,12 +7,27 @@ const debugTag = '[DM_DEVICES]';
 
 const retrieveDevices = async () => {
 	console.log(`${debugTag} Demanding all devices from DB...`);
-	const query = 'SELECT * FROM devices;';
 	try {
-		const devices = await db.retrieveAll(query);
+		const devices = await db.retrieveAll();
 		return devices;
 	} catch (error) {
 		console.error(`${debugTag} Error fetching devices:`, error);
+		throw error;
+	}
+};
+
+const retrieveDeviceByID = async (id) => {
+	console.log(`${debugTag} Fetching device with ID: ${id}...`);
+	try {
+		const device = await db.retrieveOneById(id);
+		if (!device) {
+			console.warn(`${debugTag} Device with ID ${id} not found.`);
+			return null;
+		}
+		console.log(`${debugTag} Successfully fetched device:`, device.length);
+		return device;
+	} catch (error) {
+		console.error(`${debugTag} Error fetching device by ID:`, error);
 		throw error;
 	}
 };
@@ -35,32 +50,25 @@ const retrieveDeviceByType = async (type) => {
 	}
 };
 
-const retrieveDeviceById = async (id) => {
-	console.log(`${debugTag} Fetching device with ID: ${id}...`);
+const createDevices = async (newDevices) => {
+	console.log(`${debugTag} Creating a new device...`);
+	let devicesData = [];
+	devicesData.push({
+		category: newDevices.category,
+		data: {
+			brand: newDevices.brand,
+			model: newDevices.model,
+			notes: newDevices.notes,
+		},
+	});
 	try {
-		const device = await db.retrieveOneById(id);
-		if (!device) {
-			console.warn(`${debugTag} Device with ID ${id} not found.`);
-			return null;
-		}
-		console.log(`${debugTag} Successfully fetched device:`, device);
-		return device;
+		const result = await db.createOne(devicesData);
+		result
+			? console.log(`${debugTag} Devices successfully created.`)
+			: console.log(`${debugTag} No devices were created.`);
+		return result;
 	} catch (error) {
-		console.error(`${debugTag} Error fetching device by ID:`, error);
-		throw error;
-	}
-};
-
-const createDevices = async (devicesData) => {
-	console.log(`${debugTag} Creating multiple devices...`);
-	try {
-		const newDevices = await db.createMany(devicesData);
-		console.log(
-			`${debugTag} Successfully created ${newDevices.length} devices.`
-		);
-		return newDevices;
-	} catch (error) {
-		console.error(`${debugTag} Error creating devices in bulk:`, error);
+		console.error(`${debugTag} Error creating device:`, error);
 		throw error;
 	}
 };
@@ -94,10 +102,10 @@ const deleteDevice = async (id) => {
 };
 
 export default {
-	createDevices,
 	retrieveDevices,
+	retrieveDeviceByID,
 	retrieveDeviceByType,
-	retrieveDeviceById,
+	createDevices,
 	updateDevice,
 	deleteDevice,
 };
