@@ -32,10 +32,9 @@ app.get('/devices/:id', async (req, res) => {
 });
 
 app.post('/devices', async (req, res) => {
-	const { category, brand, model, notes, quantity } = req.body;
-	const newDevices = { category, brand, model, notes, quantity };
-	const result = await devicesDM.createDevices(newDevices);
-	res.status(201).json(`Added `, result, ` devices to the database.`);
+	const { category, brand, model, notes } = req.body;
+	const result = await devicesDM.createDevices(category, brand, model, notes);
+	res.status(201).json(`Added ${result} devices to the database.`);
 });
 
 app.put('/devices/:id', async (req, res) => {});

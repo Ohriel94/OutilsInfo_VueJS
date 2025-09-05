@@ -23,18 +23,20 @@ const pool = new Pool({
 const retrieveAll = async (query) => {
 	console.log(`${debugTag} Fetching all devices...`);
 	const result = await pool.query('SELECT * FROM devices;');
+	pool.end();
 	return result.rows;
 };
 
 const retrieveOneById = async (id) => {
 	console.log(`${debugTag} Fetching device with ID: ${id}...`);
-	const result = await pool.query('SELECT * FROM devices WHERE id = $1;', [
+	const result = await pool.query('SELECT * FROM devices WHERE pk = $1;', [
 		id,
 	]);
 	if (result.rows.length === 0) {
 		console.warn(`${debugTag} No device found with ID: ${id}`);
 		return null;
 	}
+	pool.end();
 	return result.rows;
 };
 
@@ -47,8 +49,10 @@ const retrieveByType = async (type) => {
 const createOne = async (device) => {
 	console.log(`${debugTag} Inserting new device in database...`);
 	const result = await pool.query(
-		`INSERT INTO devices (pk, category, is_affected, data) VALUES (DEFAULT,'${device.category}',DEFAULT,'{"brand": "Dell","model": "Vostro 5505","notes": "Voici des notes tres pertinentes"}'::json);`
+		`INSERT INTO devices (pk, category, is_affected, data) VALUES (DEFAULT, $1, DEFAULT, $2::json);`,
+		[device.category, device.data]
 	);
+	console.log(result.rowCount);
 	return result.rowCount;
 };
 

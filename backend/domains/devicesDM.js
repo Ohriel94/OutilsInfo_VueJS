@@ -50,19 +50,16 @@ const retrieveDeviceByType = async (type) => {
 	}
 };
 
-const createDevices = async (newDevices) => {
+const createDevices = async (category, brand, model, notes) => {
 	console.log(`${debugTag} Creating a new device...`);
-	let devicesData = [];
-	devicesData.push({
-		category: newDevices.category,
-		data: {
-			brand: newDevices.brand,
-			model: newDevices.model,
-			notes: newDevices.notes,
-		},
-	});
+	let newDevices = {
+		category: category,
+		data: { brand, model, notes },
+	};
+	newDevices.data = JSON.stringify(newDevices.data);
+	console.log(newDevices.data);
 	try {
-		const result = await db.createOne(devicesData);
+		const result = await db.createOne(newDevices);
 		result
 			? console.log(`${debugTag} Devices successfully created.`)
 			: console.log(`${debugTag} No devices were created.`);
