@@ -50,7 +50,7 @@ const createOne = async (device) => {
 	console.log(`${debugTag} Inserting new device in database...`);
 	const result = await pool.query(
 		`INSERT INTO devices (pk, category, is_affected, data) VALUES (DEFAULT, $1, DEFAULT, $2::json);`,
-		[device.category, device.data]
+		[device.category, JSON.stringify(device.data)]
 	);
 	console.log(result.rowCount);
 	return result.rowCount;
@@ -58,7 +58,17 @@ const createOne = async (device) => {
 
 const updateOneById = async (id, deviceData) => {
 	console.log(`${debugTag} Updating device with ID: ${id}...`);
-	return true;
+	const result = await pool.query(
+		`UPDATE devices SET category = $1, is_affected = $2, data = $3::json WHERE pk = $4::uuid;`,
+		[
+			deviceData.category,
+			deviceData.is_affected,
+			JSON.stringify(deviceData.data),
+			id,
+		]
+	);
+	console.log(result.rowCount);
+	return result.rowCount;
 };
 
 const deleteOneById = async (id) => {

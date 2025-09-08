@@ -73,7 +73,7 @@ const createDevices = async (category, brand, model, notes) => {
 const updateDevice = async (id, deviceData) => {
 	console.log(`${debugTag} Updating device with ID: ${id}...`);
 	try {
-		const updatedDevice = await db.update(id, deviceData);
+		const updatedDevice = await db.updateOneById(id, deviceData);
 		return updatedDevice;
 	} catch (error) {
 		console.error(`${debugTag} Error updating device with ID ${id}:`, error);

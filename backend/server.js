@@ -37,6 +37,11 @@ app.post('/devices', async (req, res) => {
 	res.status(201).json(`Added ${result} devices to the database.`);
 });
 
-app.put('/devices/:id', async (req, res) => {});
+app.put('/devices/:id', async (req, res) => {
+	const info = req.body;
+	let id = req.params.id;
+	const result = await devicesDM.updateDevice(id, info);
+	res.status(200).json(`${id} has been updated...`);
+});
 
 app.delete('/devices/:id', async (req, res) => {});
