@@ -20,13 +20,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/devices', async (req, res) => {
-	let devices;
-	devices = await devicesDM.retrieveDevices();
+	const devices = await devicesDM.retrieveDevices();
 	res.status(200).json(devices);
 });
 
 app.get('/devices/:id', async (req, res) => {
-	let id = req.params.id;
+	const id = req.params.id;
 	const device = await devicesDM.retrieveDeviceByID(id);
 	res.status(200).json(device);
 });
@@ -39,9 +38,23 @@ app.post('/devices', async (req, res) => {
 
 app.put('/devices/:id', async (req, res) => {
 	const info = req.body;
-	let id = req.params.id;
+	const id = req.params.id;
 	const result = await devicesDM.updateDevice(id, info);
 	res.status(200).json(`${id} has been updated...`);
 });
 
-app.delete('/devices/:id', async (req, res) => {});
+app.delete('/devices/:id', async (req, res) => {
+	const id = req.params.id;
+	const result = await devicesDM.deleteDevice(id);
+	console.log(result);
+	res.status(200).json(`${id} has been deleted...`);
+});
+
+// ...existing code...
+
+process.on('uncaughtException', (err) => {
+	console.error('[SERVER] Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+	console.error('[SERVER] Unhandled Rejection:', reason);
+});

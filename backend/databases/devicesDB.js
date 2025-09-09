@@ -73,13 +73,16 @@ const updateOneById = async (id, deviceData) => {
 
 const deleteOneById = async (id) => {
 	console.log(`${debugTag} Deleting device with ID: ${id}...`);
-	return true;
+	const result = await pool.query('DELETE FROM devices WHERE pk = $1:uuid;', [
+		id,
+	]);
+	return result;
 };
 
 export default {
+	createOne,
 	retrieveAll,
 	retrieveByType,
-	createOne,
 	retrieveOneById,
 	updateOneById,
 	deleteOneById,

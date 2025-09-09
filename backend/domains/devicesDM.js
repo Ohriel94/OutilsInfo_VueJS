@@ -84,14 +84,13 @@ const updateDevice = async (id, deviceData) => {
 const deleteDevice = async (id) => {
 	console.log(`${debugTag} Deleting device with ID: ${id}...`);
 	try {
-		const result = await db.delete(id);
+		const result = await db.deleteOneById(id);
 		if (result) {
 			console.log(`${debugTag} Successfully deleted device with ID: ${id}`);
-			return true;
 		} else {
 			console.warn(`${debugTag} Device with ID ${id} not found.`);
-			return false;
 		}
+		return result;
 	} catch (error) {
 		console.error(`${debugTag} Error deleting device with ID ${id}:`, error);
 		throw error;
