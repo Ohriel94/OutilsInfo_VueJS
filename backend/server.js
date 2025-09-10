@@ -46,8 +46,8 @@ app.put('/devices/:id', async (req, res) => {
 app.delete('/devices/:id', async (req, res) => {
 	const id = req.params.id;
 	const result = await devicesDM.deleteDevice(id);
-	console.log(result);
-	res.status(200).json(`${id} has been deleted...`);
+	if (result < 0) res.status(200).json(`${id} successfully deleted...`);
+	else res.status(404).json(`${id} not found.`);
 });
 
 // ...existing code...

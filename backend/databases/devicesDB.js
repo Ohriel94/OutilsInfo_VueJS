@@ -73,10 +73,10 @@ const updateOneById = async (id, deviceData) => {
 
 const deleteOneById = async (id) => {
 	console.log(`${debugTag} Deleting device with ID: ${id}...`);
-	const result = await pool.query('DELETE FROM devices WHERE pk = $1:uuid;', [
+	const result = await pool.query('DELETE FROM devices WHERE pk = $1::uuid;', [
 		id,
 	]);
-	return result;
+	return result.rowCount;
 };
 
 export default {
