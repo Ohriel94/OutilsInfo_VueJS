@@ -31,8 +31,8 @@ app.get('/devices/:id', async (req, res) => {
 });
 
 app.post('/devices', async (req, res) => {
-	const { category, brand, model, notes } = req.body;
-	const result = await devicesDM.createDevices(category, brand, model, notes);
+	const { category, brand, model } = req.body;
+	const result = await devicesDM.createDevices(category, brand, model);
 	res.status(201).json(`Added ${result} devices to the database.`);
 });
 

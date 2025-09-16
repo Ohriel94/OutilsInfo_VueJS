@@ -25,6 +25,19 @@ const connectDB = async () => {
 // 	console.error(`${debugTag} Error connecting to the database:`, error)
 // );
 
+// Function to create one or multiple devices
+const createOne = async (device) => {
+	console.log(`${debugTag} Inserting new device in database...`);
+	const pool = await connectDB();
+	const result = await pool.query(
+		`INSERT INTO devices (pk, category, is_affected, infos) VALUES (DEFAULT, $1, DEFAULT, $2::json);`,
+		[device.category, JSON.stringify(device.data)]
+	);
+	console.log(result.rowCount);
+	pool.end();
+	return result.rowCount;
+};
+
 const retrieveAll = async (query) => {
 	console.log(`${debugTag} Fetching all devices...`);
 	const pool = await connectDB();
@@ -50,19 +63,6 @@ const retrieveOneById = async (id) => {
 const retrieveByType = async (type) => {
 	console.log(`${debugTag} Fetching devices of type: ${type}...`);
 	return true;
-};
-
-// Function to create one or multiple devices
-const createOne = async (device) => {
-	console.log(`${debugTag} Inserting new device in database...`);
-	const pool = await connectDB();
-	const result = await pool.query(
-		`INSERT INTO devices (pk, category, is_affected, data) VALUES (DEFAULT, $1, DEFAULT, $2::json);`,
-		[device.category, JSON.stringify(device.data)]
-	);
-	console.log(result.rowCount);
-	pool.end();
-	return result.rowCount;
 };
 
 const updateOneById = async (id, deviceData) => {

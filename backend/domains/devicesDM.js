@@ -50,14 +50,13 @@ const retrieveDeviceByType = async (type) => {
 	}
 };
 
-const createDevices = async (category, brand, model, notes) => {
+const createDevices = async (category, brand, model) => {
 	console.log(`${debugTag} Creating a new device...`);
 	let newDevices = {
 		category: category,
-		data: { brand, model, notes },
+		infos: { brand, model },
 	};
 	newDevices.data = JSON.stringify(newDevices.data);
-	console.log(newDevices.data);
 	try {
 		const result = await db.createOne(newDevices);
 		result
