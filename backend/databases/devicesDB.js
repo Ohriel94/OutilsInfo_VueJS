@@ -26,17 +26,14 @@ const connectDB = async () => {
 // );
 
 // Function to create one or multiple devices
-const createOne = async (device) => {
-	console.log(`${debugTag} Inserting new device in database...`);
+const createMany = async (query) => {
+	console.log(`${debugTag} Inserting multiple devices in database...`);
 	const pool = await connectDB();
-	const result = await pool.query(
-		`INSERT INTO devices (pk, category, is_affected, infos) VALUES (DEFAULT, $1, DEFAULT, $2::json);`,
-		[device.category, JSON.stringify(device.data)]
-	);
+	const result = await pool.query(query);
 	console.log(result.rowCount);
 	pool.end();
 	return result.rowCount;
-};
+}
 
 const retrieveAll = async (query) => {
 	console.log(`${debugTag} Fetching all devices...`);
@@ -94,7 +91,7 @@ const deleteOneById = async (id) => {
 };
 
 export default {
-	createOne,
+	createMany,
 	retrieveAll,
 	retrieveByType,
 	retrieveOneById,

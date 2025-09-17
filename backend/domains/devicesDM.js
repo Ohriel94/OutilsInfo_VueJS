@@ -5,6 +5,30 @@ import db from '../databases/devicesDB.js';
 
 const debugTag = '[DM_DEVICES]';
 
+const createDevices = async (category, brand, model,quantity) => {
+	console.log(`${debugTag} Creating a new device...`);
+	let newDevices = {
+		category: category,
+		infos: JSON.stringify({ brand, model }),
+	};
+	let query = `INSERT INTO devices (category, infos) VALUES `;
+	for (let i = 0; i < quantity; i++) {
+		query += `('${newDevices.category}', '${newDevices.infos}')`;
+		if (i < quantity - 1) query += ', ';
+		else query += ';';
+	}
+	try {
+		const result = await db.createMany(query);
+		result
+			? console.log(`${debugTag} Devices successfully created.`)
+			: console.log(`${debugTag} No devices were created.`);
+		return result;
+	} catch (error) {
+		console.error(`${debugTag} Error creating device:`, error);
+		throw error;
+	}
+};
+
 const retrieveDevices = async () => {
 	console.log(`${debugTag} Demanding all devices from DB...`);
 	try {
@@ -50,25 +74,6 @@ const retrieveDeviceByType = async (type) => {
 	}
 };
 
-const createDevices = async (category, brand, model) => {
-	console.log(`${debugTag} Creating a new device...`);
-	let newDevices = {
-		category: category,
-		infos: { brand, model },
-	};
-	newDevices.data = JSON.stringify(newDevices.data);
-	try {
-		const result = await db.createOne(newDevices);
-		result
-			? console.log(`${debugTag} Devices successfully created.`)
-			: console.log(`${debugTag} No devices were created.`);
-		return result;
-	} catch (error) {
-		console.error(`${debugTag} Error creating device:`, error);
-		throw error;
-	}
-};
-
 const updateDevice = async (id, deviceData) => {
 	console.log(`${debugTag} Updating device with ID: ${id}...`);
 	try {
@@ -97,10 +102,10 @@ const deleteDevice = async (id) => {
 };
 
 export default {
+	createDevices,
 	retrieveDevices,
 	retrieveDeviceByID,
 	retrieveDeviceByType,
-	createDevices,
 	updateDevice,
 	deleteDevice,
 };
