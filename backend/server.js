@@ -26,8 +26,11 @@ app.get('/devices', async (req, res) => {
 
 app.get('/devices/:id', async (req, res) => {
 	const id = req.params.id;
-	const device = await devicesDM.retrieveDeviceByID(id);
-	res.status(200).json(device);
+	const devices = await devicesDM.retrieveDevices();
+	devices.map((device) => {
+		if (device.pk === id) res.status(200).json(device);
+	});
+	res.status(404).json(`${id} not found.`);
 });
 
 app.post('/devices', async (req, res) => {

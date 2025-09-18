@@ -26,8 +26,14 @@ const connectDB = async () => {
 // );
 
 // Function to create one or multiple devices
-const createMany = async (query) => {
+const create = async (newDevice, quantity = 1) => {
 	console.log(`${debugTag} Inserting multiple devices in database...`);
+	let query = `INSERT INTO devices (category, infos) VALUES `;
+	for (let i = 0; i < quantity; i++) {
+		query += `('${newDevice.category}', '${newDevice.infos}')`;
+		if (i < quantity - 1) query += ', ';
+		else query += ';';
+	}
 	const pool = await connectDB();
 	const result = await pool.query(query);
 	console.log(result.rowCount);
@@ -35,7 +41,7 @@ const createMany = async (query) => {
 	return result.rowCount;
 }
 
-const retrieveAll = async (query) => {
+const retrieve = async () => {
 	console.log(`${debugTag} Fetching all devices...`);
 	const pool = await connectDB();
 	const result = await pool.query('SELECT * FROM devices;');
@@ -43,30 +49,11 @@ const retrieveAll = async (query) => {
 	return result.rows;
 };
 
-const retrieveOneById = async (id) => {
-	console.log(`${debugTag} Fetching device with ID: ${id}...`);
-	const pool = await connectDB();
-	const result = await pool.query('SELECT * FROM devices WHERE pk = $1;', [
-		id,
-	]);
-	if (result.rows.length === 0) {
-		console.warn(`${debugTag} No device found with ID: ${id}`);
-		return null;
-	}
-	pool.end();
-	return result.rows;
-};
-
-const retrieveByType = async (type) => {
-	console.log(`${debugTag} Fetching devices of type: ${type}...`);
-	return true;
-};
-
-const updateOneById = async (id, deviceData) => {
+const updateOne = async (id, deviceData) => {
 	console.log(`${debugTag} Updating device with ID: ${id}...`);
 	const pool = await connectDB();
 	const result = await pool.query(
-		`UPDATE devices SET category = $1, is_affected = $2, data = $3::json WHERE pk = $4::uuid;`,
+		`UPDATE devices SET category = $1, is_affected = $2, data = $3::json WHERE id = $4::uuid;`,
 		[
 			deviceData.category,
 			deviceData.is_affected,
@@ -79,10 +66,10 @@ const updateOneById = async (id, deviceData) => {
 	return result.rowCount;
 };
 
-const deleteOneById = async (id) => {
+const deleteOne = async (id) => {
 	console.log(`${debugTag} Deleting device with ID: ${id}...`);
 	const pool = await connectDB();
-	const result = await pool.query('DELETE FROM devices WHERE pk = $1::uuid;', [
+	const result = await pool.query('DELETE FROM devices WHERE id = $1::uuid;', [
 		id,
 	]);
 	console.log(result.rowCount);
@@ -91,10 +78,8 @@ const deleteOneById = async (id) => {
 };
 
 export default {
-	createMany,
-	retrieveAll,
-	retrieveByType,
-	retrieveOneById,
-	updateOneById,
-	deleteOneById,
+	create,
+	retrieve,
+	updateOne,
+	deleteOne,
 };
