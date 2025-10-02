@@ -46,8 +46,18 @@ const updateOne = async (id, info) => {
 	return result.rowCount;
 };
 
+const deleteOne = async (id) => {
+	console.log(`${debugTag} Deleting user with ID: ${id}...`);
+	const pool = await connectDB();
+	const result = await pool.query(`DELETE FROM users WHERE id = $1;`, [id]);
+	console.log(result.rowCount);
+	pool.end();
+	return result.rowCount;
+}
+
 export default {
 	create,
 	retrieve,
-	updateOne
+	updateOne,
+	deleteOne
 };

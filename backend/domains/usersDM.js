@@ -40,8 +40,20 @@ const updateUser = async (id, userData) => {
     }
 }
 
+const deleteUser = async (id) => {
+    console.log(`${debugTag} Deleting user with ID: ${id}...`);
+    try {
+        const result = await db.deleteOne(id);
+        return result;
+    } catch (error) {
+        console.error(`${debugTag} Error deleting user with ID ${id}:`, error.detail);
+        throw error;
+    }
+}
+
 export default {
     createUser,
     retrieveUsers,
-    updateUser
+    updateUser,
+    deleteUser
 }

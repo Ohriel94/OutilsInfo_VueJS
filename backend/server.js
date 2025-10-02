@@ -48,8 +48,8 @@ app.post('/devices', async (req, res) => {
 
 app.put('/devices/:id', async (req, res) => {
 	const id = req.params.id;
-	const info = req.body;
-	const result = await devicesDM.updateDevice(id, info);
+	const body = req.body;
+	const result = await devicesDM.updateDevice(id, body);
 	res.status(200).json(`${id} has been updated...`);
 });
 
@@ -82,9 +82,16 @@ app.post('/users', async (req, res) => {
 
 app.put('/users/:id', async (req, res) => {
 	const id = req.params.id;
-	const info = req.body;
-	const result = await usersDM.updateUser(id, info);
+	const body = req.body;
+	const result = await usersDM.updateUser(id, body);
 	res.status(200).json(`${id} has been updated...`);
+});
+
+app.delete('/users/:id', async (req, res) => {
+	const id = req.params.id;
+	const result = await usersDM.deleteUser(id);
+	if (result > 0) res.status(200).json(`${id} successfully deleted...`);
+	else res.status(404).json(`${id} not found.`);
 });
 //#endregion
 
