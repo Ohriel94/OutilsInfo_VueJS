@@ -13,9 +13,9 @@ const createDevices = async (category, brand, model,quantity) => {
 	};
 	try {
 		const result = await db.create(newDevice, quantity);
-		result
-			? console.log(`${debugTag} Devices successfully created.`)
-			: console.log(`${debugTag} No devices were created.`);
+		if (!result)
+			console.log(`${debugTag} No devices were created.`);
+		console.log(`${debugTag} Devices successfully created.`)
 		return result;
 	} catch (error) {
 		console.error(`${debugTag} Error creating device:`, error);

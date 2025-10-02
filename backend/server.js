@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import devicesDM from './domains/devicesDM.js';
+import usersDM from './domains/usersDM.js';
 
 const debugTag = '[SERVER]';
 console.log(`${debugTag} Server is starting...`);
@@ -19,8 +20,12 @@ app.get('/', (req, res) => {
 	res.json({ info: 'OutilsInfo_VueJS Backend is running.' });
 });
 
+//#region Devices Routes
 app.get('/devices', async (req, res) => {
 	const devices = await devicesDM.retrieveDevices();
+	if (!devices) {
+		res.status(500).json('Error fetching devices.');
+	}
 	res.status(200).json(devices);
 });
 
@@ -42,9 +47,9 @@ app.post('/devices', async (req, res) => {
 });
 
 app.put('/devices/:id', async (req, res) => {
-	const info = req.body;
 	const id = req.params.id;
-	const result = await devicesDM.updateDevice(id, info);
+	const body = req.body;
+	const result = await devicesDM.updateDevice(id, body);
 	res.status(200).json(`${id} has been updated...`);
 });
 
@@ -54,9 +59,43 @@ app.delete('/devices/:id', async (req, res) => {
 	if (result > 0) res.status(200).json(`${id} successfully deleted...`);
 	else res.status(404).json(`${id} not found.`);
 });
+//#endregion 
 
-// ...existing code...
+//#region Users Routes
+app.get('/users', async (req, res) => {
+	const users = await usersDM.retrieveUsers();
+	if (!users) {
+		res.status(50).json('Error fetching users.');
+	} else res.status(200).json(users);
+});
 
+app.post('/users', async (req, res) => {
+	const { lastName, firstName, email, phone } = req.body;
+	try {
+		const result = await usersDM.createUser(lastName, firstName, email, phone);
+		res.status(201).json(`User ${firstName} ${lastName} added to the database.`);
+	} catch (error) {
+        console.error(`${debugTag} Error creating user:`, error.detail);
+		res.status(500).json('Error adding user.');
+	}
+});
+
+app.put('/users/:id', async (req, res) => {
+	const id = req.params.id;
+	const body = req.body;
+	const result = await usersDM.updateUser(id, body);
+	res.status(200).json(`${id} has been updated...`);
+});
+
+app.delete('/users/:id', async (req, res) => {
+	const id = req.params.id;
+	const result = await usersDM.deleteUser(id);
+	if (result > 0) res.status(200).json(`${id} successfully deleted...`);
+	else res.status(404).json(`${id} not found.`);
+});
+//#endregion
+
+// ======================== Error Handling 
 process.on('uncaughtException', (err) => {
 	console.error('[SERVER] Uncaught Exception:', err);
 });

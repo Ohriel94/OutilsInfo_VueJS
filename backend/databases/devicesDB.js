@@ -1,3 +1,4 @@
+import util from './utilities.js';
 import { Pool } from 'pg';
 
 const debugTag = '[DB_DEVICES]';
@@ -13,17 +14,9 @@ const connectionInfos = {
 };
 
 const connectDB = async () => {
-	const pool = new Pool(connectionInfos);
+	const pool = new Pool(util.connectionInfos);
 	return pool;
 };
-// Connect to the database
-// client.connect();
-// .then(() =>
-// 	console.log(`${debugTag} Successfully connected to the database.`)
-// )
-// .catch((error) =>
-// 	console.error(`${debugTag} Error connecting to the database:`, error)
-// );
 
 // Function to create one or multiple devices
 const create = async (newDevice, quantity = 1) => {
