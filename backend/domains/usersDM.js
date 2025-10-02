@@ -29,7 +29,19 @@ const retrieveUsers = async () => {
     }
 }
 
+const updateUser = async (id, userData) => {
+    console.log(`${debugTag} Updating user with ID: ${id}...`);
+    try {
+        const result = await db.updateOne(id, userData);
+       return result;
+    } catch (error) {
+        console.error(`${debugTag} Error updating user with ID ${id}:`, error.detail);
+        throw error;
+    }
+}
+
 export default {
     createUser,
-    retrieveUsers
+    retrieveUsers,
+    updateUser
 }

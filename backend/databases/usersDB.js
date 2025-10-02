@@ -28,9 +28,26 @@ const retrieve = async () => {
 	const result = await pool.query('SELECT * FROM users;');
 	pool.end();
 	return result.rows;
-}
+};
+
+const updateOne = async (id, info) => {
+	console.log(`${debugTag} Updating user ${id}...`);
+	const pool = await connectDB();
+	const result = await pool.query(`UPDATE users SET last_name = $1, first_name = $2, email = $3, phone = $4 WHERE id = $5;`,
+		[
+			info.last_name,
+			info.first_name,
+			info.email,
+			info.phone,
+			id
+		]);
+	console.log(result.rowCount);
+	pool.end();
+	return result.rowCount;
+};
 
 export default {
 	create,
-	retrieve
+	retrieve,
+	updateOne
 };

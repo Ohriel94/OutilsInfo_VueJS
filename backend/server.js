@@ -47,8 +47,8 @@ app.post('/devices', async (req, res) => {
 });
 
 app.put('/devices/:id', async (req, res) => {
-	const info = req.body;
 	const id = req.params.id;
+	const info = req.body;
 	const result = await devicesDM.updateDevice(id, info);
 	res.status(200).json(`${id} has been updated...`);
 });
@@ -78,6 +78,13 @@ app.post('/users', async (req, res) => {
         console.error(`${debugTag} Error creating user:`, error.detail);
 		res.status(500).json('Error adding user.');
 	}
+});
+
+app.put('/users/:id', async (req, res) => {
+	const id = req.params.id;
+	const info = req.body;
+	const result = await usersDM.updateUser(id, info);
+	res.status(200).json(`${id} has been updated...`);
 });
 //#endregion
 
